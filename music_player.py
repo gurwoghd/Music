@@ -1,6 +1,7 @@
 import tkinter
 import tkinter.font
 import tkinter.filedialog
+import tkinter.ttk
 from pygame import mixer
 
 window = tkinter.Tk()
@@ -10,7 +11,7 @@ def initGUI(): # GUI 초기화
     global WIDTH, HEIGHT, isPaused, index
 
     WIDTH = 600
-    HEIGHT = 500
+    HEIGHT = 700
     isPaused = False # 일시정지 되었는가?
     index = -1
 
@@ -27,7 +28,7 @@ def Setscreen():
     font = tkinter.font.Font(family = "맑은 고딕", slant = "roman", size=30, weight = "bold")
     label = tkinter.Label(window, text="음악플레이어", font=font)
     countLabel = tkinter.Label(window, text="노래 개수 : 0")
-    listbox = tkinter.Listbox(window, selectmode="extended", height=20, width=obj_width, selectbackground="orange")
+    listbox = tkinter.Listbox(window, selectmode="extended", height=20, width=obj_width)
     pastButton = tkinter.Button(window, text="이전음악", overrelief="solid", width=27, command=PlayPast)
     nextButton = tkinter.Button(window, text="다음음악", overrelief="solid", width=27, command=PlayNext)
     pauseButton = tkinter.Button(window, text="재생/일시정지", overrelief="solid", width=27, command=Pause)
@@ -43,12 +44,12 @@ def Setscreen():
     addButton.place(x=0, y=460)
     deleteButton.place(x=303, y=460)
 
-    
 def PlayNext():
     global listbox, index, music_list
 
     if not IsEmpty():
         # 현재 음악이 마지막 항목이면 첫번째로 이동한다
+        if index >= 0: listbox.itemconfig(index, {'bg' : 'white'})
         if index == len(music_list) - 1:
             index = 0
         else:
@@ -59,9 +60,10 @@ def PlayPast():
     global listbox, music_list, index
 
     if not IsEmpty():
+        if index >= 0: listbox.itemconfig(index, {'bg' : 'white'})
         # 현재 음악이 첫번째 항목이면 마지막으로 이동한다.
         if index <= 0:
-            index = len(listbox.curselection()) - 1
+            index = len(music_list) - 1
         else:
             index -= 1
         currentMusic()
@@ -111,7 +113,6 @@ def AddMusic():
     lastest = listbox.size()
     music_list.append(tkinter.filedialog.askopenfilename())
     listbox.insert(lastest, music_list[-1])
-
     HowMany()
 
 def HowMany(): # 노래 개수를 gui상에 보여주는 함수
@@ -123,9 +124,9 @@ def currentMusic():
     global listbox, index, music_list
 
     if index >= 0: # 음악이 1개라도 존재하여야 한다.
+        listbox.itemconfig(index, {'bg' : 'orange'})
         mixer.music.load(music_list[index])
         mixer.music.play()
-        print(index)
     else:
         print('노래가 없어요')
 
